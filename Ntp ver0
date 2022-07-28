@@ -1,0 +1,57 @@
+#This example is taken from molecule/default/converge.yml and is tested on each push, pull request and release.
+
+---
+- name: Converge
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - role: robertdebock.cron
+    - role: robertdebock.ntp
+      ntp_state: stopped
+      
+      
+      #The machine needs to be prepared. In CI this is done using molecule/default/prepare.yml:
+---
+- name: Prepare
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  roles:
+    - role: robertdebock.bootstrap
+    
+    
+ #The default values for the variables are set in defaults/main.yml:
+ 
+ ---
+# defaults file for ntp
+
+# The state of the NTP service.
+ntp_state: started
+
+# The state of the NTP service at boot.
+ntp_enabled: yes
+
+# A list of IP addresses to listen on.
+ntp_interfaces:
+  - address: "127.0.0.1"
+
+# A list of NTP pools and their options.
+ntp_pool:
+  - name: "0.pool.ntp.org iburst"
+  - name: "1.pool.ntp.org iburst"
+  - name: "2.pool.ntp.org iburst"
+  - name: "3.pool.ntp.org iburst"
+
+# A list of NTP servers and their options.
+# ntp_server:
+#   - name: ntp.example.com
+#     options:
+#       - iburst
+
+# The timezone.
+ntp_timezone: Etc/UTC
+
+
